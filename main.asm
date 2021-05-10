@@ -54,3 +54,20 @@ main:
 exit:
 	li $v0, 10
 	syscall 
+
+
+	power: 
+		li $t0, 1 
+		beq $a2, $zero, exit
+		while: 
+			beqz $a2, exit
+			mul $t0, $t0, $a1
+			subi $a2, $a2, 1
+			j while
+			
+		exit:
+			move $v1, $t0
+			jr $ra
+
+
+
