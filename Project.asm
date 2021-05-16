@@ -40,7 +40,8 @@ main:
 	
 	#  if, else-if branching
 	beq $s0, 10, Label
-	bne $s0, 10, And
+	beq $s0, 8, And
+	beq $s0, 2, And1
 	Label:
 	
 	addi $a0, $s1, 0
@@ -56,16 +57,17 @@ main:
 	
 	And: 
 	beq $s1, 10, Label2
-	bne $s1, 10, Label3
+	
+	And1:
+	beq $s1, 10, Label3
 	
 	Label2:
 	
-	addi $a0, $s0, 0
-        addi $a1, $s2, 0
+        addi $a0, $s2, 0
         
-        jal Basetodec
+        jal octaltodec
         
-         li $v0, 1
+        li $v0, 1
 	addi $a0, $v1, 0
 	syscall
 	
@@ -73,11 +75,9 @@ main:
 	
 	Label3:
 	
-	addi $a0, $s0, 0
-        addi $a1, $s2, 0
-        addi $a2, $s1, 0
+	addi $a0, $s2, 0
         
-        jal anybasetoanybase
+        jal Binarytodec
         
         li $v0, 1
 	addi $a0, $v1, 0
@@ -125,8 +125,8 @@ Exit:
 		li $t0, 1 
 		beq $a1, $zero, exit
 		while: 
-			beqz $a1, exit
-			mul $t0, $t0, $a0
+			beqz $a1, exit #while (y != 0)
+			mul $t0, $t0, $a0 #result*=x;
 			subi $a1, $a1, 1
 			j while
 			
@@ -134,16 +134,63 @@ Exit:
 			move $v1, $t0
 			jr $ra
 			
-	Basetodec: 
-		add $v1, $a1, $a0
-		jr $ra
+	octaltodec: 
+		addi $sp, $sp, -4
+		sw $ra, 0($sp)
+		addi $t1, $zero, 0
+		addi $t2, $zero, 0
+		move $t3, $a0
+		addi $t4, $zero, 8
+		addi $t6, $zero, 10
+		addi $t9, $zero, 1
 		
+		While2: 
+			blt $t3, $t9, End1
+			rem $t5, $t3, $t6
+			add $a0, $t4, $zero
+			add $a1, $t2, $zero
+			jal power
+			mul $t7, $v1, $t5
+			add $t1, $t1, $t7
+			addi $t2, $t2, 1
+			div $t3, $t3, $t6
+			j While2
+		End1:
 		
-	anybasetoanybase:
-		add $v1, $a1, $a0
-		add $v1, $v1, $a2
-		jr $ra 
+			move $v1, $t1
+			lw $ra, 0($sp)
+			addi $sp, $sp, 4
+	        	jr $ra  
+		
+	Binarytodec:
+		addi $sp, $sp, -4
+		sw $ra, 0($sp)
+		addi $t1, $zero, 0
+		addi $t2, $zero, 0
+		move $t4, $a0
+		addi $t5, $zero, 10
+		addi $t6, $zero, 2
+		addi $t7, $zero, 1
+		
+		While3: 
+			blt $t4, $t7, End3
+			rem $t3, $t4, $t5
+			div $t4, $t4, $t5
+			add $a0, $t6, $zero
+			add $a1, $t2, $zero
+			jal power
+			mul $t8, $v1, $t3
+			add $t1, $t1, $t8
+			addi $t2, $t2, 1
+			j While3
+		End3: 
+			move $v1, $t1
+			lw $ra, 0($sp)
+			addi $sp, $sp, 4
+	        	jr $ra  
+		
 
+			
 		
 
 
