@@ -1,5 +1,8 @@
-## main function in base converter##
-
+## BASE CONVERTER ##
+#Group_L Project
+#Diego Ponce - CST 237 Fall 20 Online
+#Parker Erickson  - CST 237 Fall 20 Online
+#Joseph Rivera - CST 237 Fall 20 Online
 
 .data
 	msg1: .asciiz "Input the base of the number: "
@@ -39,9 +42,9 @@ main:
 	move $s2, $v0
 	
 	#  if, else-if branching
-	beq $s0, 10, Label
-	beq $s0, 8, And
-	beq $s0, 2, And1
+	beq $s0, 10, Label  #if(basefrom==10)
+	beq $s0, 8, And	     #if(basefrom==8)
+	beq $s0, 2, And1     #if(basefrom==2)
 	Label:
 	
 	addi $a0, $s1, 0
@@ -50,16 +53,16 @@ main:
         jal DectoBase
         
         li $v0, 1
-	addi $a0, $v1, 0
+	addi $a0, $v1, 0  # printf(" %d", DecToBase(num, baseTo));
 	syscall
 	
 	j Exit
 	
 	And: 
-	beq $s1, 10, Label2
+	beq $s1, 10, Label2 #If(baseto == 10)
 	
 	And1:
-	beq $s1, 10, Label3
+	beq $s1, 10, Label3  #If(baseto == 10)
 	
 	Label2:
 	
@@ -145,15 +148,15 @@ Exit:
 		addi $t9, $zero, 1
 		
 		While2: 
-			blt $t3, $t9, End1
-			rem $t5, $t3, $t6
+			blt $t3, $t9, End1 # while(octal != 0)
+			rem $t5, $t3, $t6 #octal%10
 			add $a0, $t4, $zero
 			add $a1, $t2, $zero
-			jal power
-			mul $t7, $v1, $t5
-			add $t1, $t1, $t7
-			addi $t2, $t2, 1
-			div $t3, $t3, $t6
+			jal power  #power(8,i)
+			mul $t7, $v1, $t5  #(octal%10) * power(8,i)
+			add $t1, $t1, $t7 #decimal + (octal%10) * power(8,i)
+			addi $t2, $t2, 1 #i++
+			div $t3, $t3, $t6  #octal=octal/10
 			j While2
 		End1:
 		
@@ -173,15 +176,15 @@ Exit:
 		addi $t7, $zero, 1
 		
 		While3: 
-			blt $t4, $t7, End3
-			rem $t3, $t4, $t5
-			div $t4, $t4, $t5
+			blt $t4, $t7, End3  #while (n != 0)
+			rem $t3, $t4, $t5 #rem = n % 10;
+			div $t4, $t4, $t5 #n /= 10
 			add $a0, $t6, $zero
 			add $a1, $t2, $zero
-			jal power
-			mul $t8, $v1, $t3
-			add $t1, $t1, $t8
-			addi $t2, $t2, 1
+			jal power       #power(2, i)
+			mul $t8, $v1, $t3  #rem * pow(2, i)
+			add $t1, $t1, $t8 #decimal = decimal + rem * pow(2, i)
+			addi $t2, $t2, 1  # i++
 			j While3
 		End3: 
 			move $v1, $t1
